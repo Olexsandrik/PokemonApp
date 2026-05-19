@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
-import type { Pokemon, PokemonDetail } from './types'
+import type { Pokemon } from './types'
 import { usePokemonStore } from '../store/usePokemonStore'
+import { fetchDetails } from './utility/fetchPokemonDetails'
 
 
-const POKEAPI_BASE = import.meta.env.VITE_API_BASE_URL 
-const LIMIT = Number(import.meta.env.VITE_POKEMON_LIMIT)
+const POKEAPI_BASE = import.meta.env.VITE_API_BASE_URL || 'https://pokeapi.co/api/v2'
+const LIMIT = Number(import.meta.env.VITE_POKEMON_LIMIT) || 24
 
 interface UsePokemonSearchReturn {
   pokemons: Pokemon[]
@@ -19,27 +20,6 @@ interface UsePokemonSearchReturn {
   hasPrev: boolean
 }
 
-async function fetchDetails(urls: string[], signal: AbortSignal): Promise<Pokemon[]> {
-  const responses = await Promise.all(
-    urls.map((url) => axios.get<PokemonDetail>(url, { signal }))
-  )
-  return responses.map((res) => ({
-    id: res.data.id,
-    name: res.data.name,
-    sprite: res.data.sprites.front_default || '',
-    types: res.data.types.map((t) => t.type.name),
-    height: res.data.height,
-    weight: res.data.weight,
-    baseExperience: res.data.base_experience,
-    abilities: res.data.abilities.map(
-      (a: PokemonDetail['abilities'][0]) => a.ability.name
-    ),
-    stats: res.data.stats.map((s: PokemonDetail['stats'][0]) => ({
-      name: s.stat.name,  
-      value: s.base_stat,
-    })),
-  }))
-}
 
 export function usePokemonSearch(
   query: string,
@@ -52,7 +32,7 @@ export function usePokemonSearch(
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
 
-  // Whenever query or type changes, rebuild the full list of matching URLs
+  
   useEffect(() => {
     const controller = new AbortController()
 
@@ -64,8 +44,8 @@ export function usePokemonSearch(
       try {
         let urls: string[] = []
 
-        if (type) {
-          // Fetch all Pokemon of this type
+        if (type) { // all type
+          
           const res = await axios.get(`${POKEAPI_BASE}/type/${type}`, {
             signal: controller.signal,
           })
@@ -75,7 +55,7 @@ export function usePokemonSearch(
         } else {
           // Fetch the full flat list of all Pokemon names+urls
           const res = await axios.get(
-            `${POKEAPI_BASE}/pokemon?limit=24&offset=0`,
+            `${POKEAPI_BASE}/pokemon?limit=${LIMIT}&offset=${page * LIMIT}`,
             { signal: controller.signal }
           )
           urls = res.data.results.map((p: { url: string }) => p.url)
@@ -85,18 +65,17 @@ export function usePokemonSearch(
         if (query.trim()) {
           const q = query.trim().toLowerCase()
           urls = urls.filter((url) => {
-            // PokeAPI detail URLs end with /pokemon/{id}/
+         
             const parts = url.replace(/\/$/, '').split('/')
             const id = parts[parts.length - 1]
-            // We only have id from URL at this point; name filtering happens after detail fetch
-            // So filter by id; name filter happens below after fetching the first page
+
             return id.includes(q)
           })
 
-          // If query could be a name, also search by name from the full name list
+
           if (isNaN(Number(q))) {
             const res = await axios.get(
-              `${POKEAPI_BASE}/pokemon?limit=100000&offset=0`,
+              `${POKEAPI_BASE}/pokemon?limit=${LIMIT}&offset=${page * LIMIT}`,
               { signal: controller.signal }
             )
             const nameMatches: string[] = res.data.results
@@ -105,7 +84,7 @@ export function usePokemonSearch(
               )
               .map((p: { url: string }) => p.url)
 
-            // Merge and deduplicate
+    
             const merged = Array.from(new Set([...urls, ...nameMatches]))
             urls = merged
           }
@@ -123,7 +102,7 @@ export function usePokemonSearch(
 
     buildUrlList()
     return () => controller.abort()
-  }, [query, type])
+  }, [query, type, page])
 
  
   useEffect(() => {
@@ -135,7 +114,6 @@ export function usePokemonSearch(
     const controller = new AbortController()
     const pageUrls = allUrls.slice(page * LIMIT, (page + 1) * LIMIT)
 
-    setLoading(true)
     fetchDetails(pageUrls, controller.signal)
       .then((data) => {
         setPokemons(data)
@@ -149,7 +127,7 @@ export function usePokemonSearch(
       })
 
     return () => controller.abort()
-  }, [allUrls, page])
+  }, [allUrls, page, setPokemons])
 
   const totalPages = Math.ceil(allUrls.length / LIMIT)
 

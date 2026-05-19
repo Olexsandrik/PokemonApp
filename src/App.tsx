@@ -31,11 +31,11 @@ function App() {
 
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Form input state
+
   const [searchInput, setSearchInput] = useState('')
   const [typeInput, setTypeInput] = useState('')
 
-  // Active search params (only updated on submit)
+
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
 
