@@ -55,7 +55,7 @@ export function usePokemonSearch(
         } else {
           // Fetch the full flat list of all Pokemon names+urls
           const res = await axios.get(
-            `${POKEAPI_BASE}/pokemon?limit=${LIMIT}&offset=${page * LIMIT}`,
+            `${POKEAPI_BASE}/pokemon?limit=10000&offset=${page}`,
             { signal: controller.signal }
           )
           urls = res.data.results.map((p: { url: string }) => p.url)
@@ -75,7 +75,7 @@ export function usePokemonSearch(
 
           if (isNaN(Number(q))) {
             const res = await axios.get(
-              `${POKEAPI_BASE}/pokemon?limit=${LIMIT}&offset=${page * LIMIT}`,
+              `${POKEAPI_BASE}/pokemon?limit=10000&offset=${page}`,
               { signal: controller.signal }
             )
             const nameMatches: string[] = res.data.results
@@ -102,7 +102,7 @@ export function usePokemonSearch(
 
     buildUrlList()
     return () => controller.abort()
-  }, [query, type, page])
+  }, [query, type])
 
  
   useEffect(() => {
