@@ -68,8 +68,6 @@ function App() {
     setTypeFilter('')
   }
 
-  console.log("loading", active.loading)
-
   return (
     <Box sx={{ minHeight: '100vh', py: 3, backgroundColor: '#f5f5f5' }}>
       <Container maxWidth="lg">
@@ -109,46 +107,43 @@ function App() {
             Reset
           </Button>
         </Box>
+        {!(active.pokemons.length === 0)  && (
+           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, alignItems: 'center', mb: 3 }}>
+            <button
+              onClick={active.prevPage}
+              disabled={activePrevious}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                cursor: activePrevious ? 'not-allowed' : 'pointer',
+            
+              }}
+            >
+              PREV
+            </button>
 
+            <Box sx={{ minWidth: 160, textAlign: 'center', fontSize: '0.9rem' }}>
+              {'totalPages' in active
+                ? `page ${active.page + 1} / ${active.totalPages}`
+                : `page ${active.page + 1}`}
+            </Box>
 
-         
-        {/* Pagination */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, alignItems: 'center', mb: 3 }}>
-          <button
-            onClick={active.prevPage}
-            disabled={activePrevious}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              cursor: activePrevious ? 'not-allowed' : 'pointer',
-          
-            }}
-          >
-            PREV
-          </button>
-
-          <Box sx={{ minWidth: 160, textAlign: 'center', fontSize: '0.9rem' }}>
-            {'totalPages' in active
-              ? `page ${active.page + 1} / ${active.totalPages}`
-              : `page ${active.page + 1}`}
+            <button
+              onClick={active.nextPage}
+              disabled={activeNext}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                cursor: activeNext ? 'not-allowed' : 'pointer',          
+              }}
+            >
+              NEXT
+            </button>
           </Box>
-
-          <button
-            onClick={active.nextPage}
-            disabled={activeNext}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              cursor: activeNext ? 'not-allowed' : 'pointer',          
-
-            }}
-          >
-            NEXT
-          </button>
-        </Box>
-
+        )}
+   
         {active.loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress />
@@ -158,6 +153,7 @@ function App() {
             <Typography>Not found</Typography>
           </Box>
         ) : (
+          <>
           <Box
             sx={{
               display: 'grid',
@@ -172,6 +168,8 @@ function App() {
               <PokemonCard key={pokemon.id} pokemon={pokemon} onSelect={handleSelect} />
             ))}
           </Box>
+          </>
+         
         )}
       </Container>
 
