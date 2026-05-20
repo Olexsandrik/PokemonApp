@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import type { Pokemon } from '../api/types'
+import { PokemonImage } from './PokemonImage'
 
 const STAT_LABELS: Record<string, string> = {
   hp: 'HP',
@@ -62,50 +63,42 @@ export function PokemonDetails({ pokemon, open, onClose }: PokemonDetailsProps) 
             ))}
           </Box>
 
-          {/* Image */}
           <Box sx={{ textAlign: 'center', mb: 2 }}>
-            <Box
-              component="img"
-              src={pokemon.sprite}
-              alt={pokemon.name}
-              sx={{ height: 160, objectFit: 'contain' }}
-            />
+            <PokemonImage pokemon={pokemon} />
           </Box>
 
           <Divider sx={{ mb: 2 }} />
 
-          {/* Height / Weight / Base Experience */}
           <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 1,
-              mb: 2,
-              textAlign: 'center',
-            }}
-          >
-            <Box>
-              <Typography variant="caption" color="textSecondary">Height</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {(pokemon.height / 10).toFixed(1)} m
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" color="textSecondary">Weight</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {(pokemon.weight / 10).toFixed(1)} kg
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" color="textSecondary">Base Exp</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {pokemon.baseExperience}
-              </Typography>
-            </Box>
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 1,
+                mb: 2,
+                textAlign: 'center',
+              }}
+            >
+              <Box>
+                <Typography variant="caption" color="textSecondary">Height</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {(pokemon.height / 10).toFixed(1)} m
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="textSecondary">Weight</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {(pokemon.weight / 10).toFixed(1)} kg
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="textSecondary">Base Exp</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {pokemon.baseExperience}
+                </Typography>
+              </Box>
           </Box>
 
           <Divider sx={{ mb: 2 }} />
-
           {/* Abilities */}
           <Box sx={{ mb: 2 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>

@@ -1,8 +1,9 @@
-import { Card, CardMedia, CardContent, Box, Chip, IconButton, Typography } from '@mui/material'
+import { Card, CardContent, Box, Chip, IconButton, Typography } from '@mui/material'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import type { Pokemon } from '../api/types'
 import { useFavoritesStore } from '../store/useFavoritesStore'
+import { PokemonImage } from './PokemonImage'
 
 interface PokemonCardProps {
   pokemon: Pokemon
@@ -51,16 +52,8 @@ export function PokemonCard({ pokemon, onSelect }: PokemonCardProps) {
         >
           #{pokemon.id}
         </Box>
-        <CardMedia
-          component="img"
-          image={pokemon.sprite}
-          alt={pokemon.name}
-          sx={{
-            height: 120,
-            objectFit: 'contain',
-            objectPosition: 'center',
-          }}
-        />
+
+        <PokemonImage pokemon={pokemon} />
       </Box>
 
       <CardContent sx={{ pb: 1 }}>

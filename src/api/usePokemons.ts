@@ -53,8 +53,10 @@ export function usePokemons(): UsePokemonsReturn {
           setError(err instanceof Error ? err.message : 'Failed to fetch pokemons')
         }
       } finally {
-        setLoading(false)
+      
+          setLoading(false)
       }
+         
     }
 
     fetchPokemons()

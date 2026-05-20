@@ -10,6 +10,7 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Typography,
 } from '@mui/material'
 import { usePokemons } from './api/usePokemons'
 import { usePokemonSearch } from './api/usePokemonSearch'
@@ -46,6 +47,10 @@ function App() {
 
   const active = isSearchActive ? searchResult : normal
 
+
+  const activePrevious = !active.pokemons || !active.hasPrev
+  const activeNext = !active.pokemons || !active.hasNext
+
   const handleSelect = (pokemon: Pokemon) => {
     setSelectedPokemon(pokemon)
     setDrawerOpen(true)
@@ -62,6 +67,8 @@ function App() {
     setSearch('')
     setTypeFilter('')
   }
+
+  console.log("loading", active.loading)
 
   return (
     <Box sx={{ minHeight: '100vh', py: 3, backgroundColor: '#f5f5f5' }}>
@@ -103,17 +110,19 @@ function App() {
           </Button>
         </Box>
 
+
+         
         {/* Pagination */}
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, alignItems: 'center', mb: 3 }}>
           <button
             onClick={active.prevPage}
-            disabled={!active.hasPrev}
+            disabled={activePrevious}
             style={{
               padding: '8px 16px',
               borderRadius: '4px',
               border: '1px solid #ccc',
-              cursor: active.hasPrev ? 'pointer' : 'not-allowed',
-              opacity: active.hasPrev ? 1 : 0.5,
+              cursor: activePrevious ? 'not-allowed' : 'pointer',
+          
             }}
           >
             PREV
@@ -127,13 +136,13 @@ function App() {
 
           <button
             onClick={active.nextPage}
-            disabled={!active.hasNext}
+            disabled={activeNext}
             style={{
               padding: '8px 16px',
               borderRadius: '4px',
               border: '1px solid #ccc',
-              cursor: active.hasNext ? 'pointer' : 'not-allowed',
-              opacity: active.hasNext ? 1 : 0.5,
+              cursor: activeNext ? 'not-allowed' : 'pointer',          
+
             }}
           >
             NEXT
@@ -143,6 +152,10 @@ function App() {
         {active.loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress />
+          </Box>
+        ) : active.pokemons.length === 0 ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <Typography>Not found</Typography>
           </Box>
         ) : (
           <Box
